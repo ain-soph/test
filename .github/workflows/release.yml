@@ -13,7 +13,7 @@ jobs:
       - name: version
         uses: actions/github-script@v4
         with:
-          scripts: |
+          script: |
             const version = context.event.release.tag_name.substring(1)
             core.exportVariable('VERISION', version)
       - name: Dump github context
