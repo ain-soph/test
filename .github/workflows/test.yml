@@ -39,3 +39,12 @@ jobs:
         shell: bash
         env:
           GITHUB_CONTEXT: ${{ toJson(env) }}
+  other2:
+    needs: dump
+    runs-on: ubuntu-latest
+    steps:
+      - name: Dump env
+        run: echo "$ENV"
+        shell: bash
+        env:
+          GITHUB_CONTEXT: ${{ toJson(env) }}
