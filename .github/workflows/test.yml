@@ -13,6 +13,12 @@ jobs:
   dump:
     runs-on: ubuntu-latest
     steps:
+      - name: version
+        uses: actions/github-script@v4
+        with:
+          script: |
+            const version = github.event
+            core.exportVariable('VERISION', version)
       - name: Dump github context
         run: echo "$GITHUB_CONTEXT"
         shell: bash
