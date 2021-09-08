@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: version
-        uses: actions/github-scripts@v3
+        uses: actions/github-script@v4
         with:
           scripts: |
             const version = context.event.release.tag_name.substring(1)
