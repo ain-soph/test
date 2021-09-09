@@ -17,8 +17,8 @@ jobs:
         uses: actions/github-script@v4
         with:
           script: |
-            const context = context
-            core.exportVariable('DUMP', context)
+            const dump = context
+            core.exportVariable('DUMP', dump)
       - name: Dump env
         run: echo "$ENV"
         shell: bash
