@@ -21,10 +21,10 @@ jobs:
             core.exportVariable('DUMP', dump)
 
       - name: Dump env
-        run: echo "$CONTEXT"
+        run: echo "$CONTEXT_CONTEXT"
         shell: bash
         env:
-          CONTEXT: ${{ toJson(env.dump) }}
+          CONTEXT_CONTEXT: ${{ toJson(env.dump) }}
 
       - name: Dump github context
         run: echo "$GITHUB_CONTEXT"
