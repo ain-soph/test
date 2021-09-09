@@ -17,10 +17,8 @@ jobs:
             const version = context.payload.release.tag_name.substring(1)
             core.exportVariable('VERSION', version)
       - name: Dump env
-        run: echo "$ENV"
+        run: echo "$VERSION"
         shell: bash
-        env:
-          VERSION2: ${{ toJson(env.version) }}
   other:
     runs-on: ubuntu-latest
     steps:

@@ -18,7 +18,7 @@ jobs:
         with:
           script: |
             const dump = context
-            core.exportVariable('DUMP', toJson(dump))
+            core.exportVariable('DUMP', dump)
 
       - name: Dump context
         run: echo "$DUMP"
