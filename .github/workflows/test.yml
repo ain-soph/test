@@ -13,29 +13,12 @@ jobs:
   dump:
     runs-on: ubuntu-latest
     steps:
-      - name: version
+      - name: context
         uses: actions/github-script@v4
         with:
           script: |
-            const version = context
-            core.exportVariable('VERISION', version)
+            const context = context
+            core.exportVariable('CONTEXT', context)
       - name: Dump env
         run: echo "$ENV"
         shell: bash
-  other:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Dump env
-        run: echo "$ENV"
-        shell: bash
-        env:
-          JOBS: ${{ toJson(jobs) }}
-  other2:
-    needs: dump
-    runs-on: ubuntu-latest
-    steps:
-      - name: Dump env
-        run: echo "$ENV"
-        shell: bash
-        env:
-          JOBS: ${{ toJson(jobs) }}
