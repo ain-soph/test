@@ -21,7 +21,7 @@ jobs:
             core.exportVariable('DUMP', dump)
 
       - name: Dump env
-        run: echo "$DUMP"
+        run: echo "$CONTEXT"
         shell: bash
         env:
           CONTEXT: ${{ toJson(env.dump) }}
