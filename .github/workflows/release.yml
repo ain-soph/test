@@ -20,7 +20,7 @@ jobs:
         run: echo "$ENV"
         shell: bash
         env:
-          GITHUB_CONTEXT: ${{ toJson(env.VERSION) }}
+          VERSION2: ${{ toJson(env.version) }}
   other:
     runs-on: ubuntu-latest
     steps:
@@ -33,7 +33,7 @@ jobs:
         run: echo "$ENV"
         shell: bash
         env:
-          GITHUB_CONTEXT: ${{ toJson(env) }}
+          ENV: ${{ toJson(env) }}
   other2:
     needs: dump
     runs-on: ubuntu-latest
@@ -42,4 +42,4 @@ jobs:
         run: echo "$ENV"
         shell: bash
         env:
-          GITHUB_CONTEXT: ${{ toJson(env) }}
+          ENV: ${{ toJson(env) }}
