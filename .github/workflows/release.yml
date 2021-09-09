@@ -15,7 +15,7 @@ jobs:
         with:
           script: |
             const version = context.payload.release.tag_name.substring(1)
-            core.exportVariable('VERISION', version)
+            core.exportVariable('VERSION', version)
       - name: Dump env
         run: echo "$ENV"
         shell: bash
