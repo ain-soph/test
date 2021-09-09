@@ -19,6 +19,15 @@ jobs:
           script: |
             const dump = context
             core.exportVariable('DUMP', dump)
+
       - name: Dump env
-        run: echo "$ENV"
+        run: echo "$DUMP"
         shell: bash
+        env:
+          CONTEXT: ${{ toJson(env.dump) }}
+
+      - name: Dump github context
+        run: echo "$GITHUB_CONTEXT"
+        shell: bash
+        env:
+          GITHUB_CONTEXT: ${{ toJson(github) }}
