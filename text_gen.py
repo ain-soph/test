@@ -86,7 +86,7 @@ def train(epoch: int):
         running_loss = []
         for inputs, labels in tqdm(train_dataloader):
             inputs: torch.Tensor = inputs.cuda(non_blocking=True)
-            labels: torch.Tensor = inputs.cuda()
+            labels: torch.Tensor = labels.cuda()
             outputs: torch.Tensor = model(inputs)
 
             optimizer.zero_grad()
