@@ -58,14 +58,19 @@ class RNN(nn.Module):
         super().__init__()
 
         self.__embedding = nn.Embedding(vocab_size, embedding_dim)
-        self.__rnn = nn.LSTM(input_size=embedding_dim, hidden_size=1024)
+        self.__rnn = nn.GRU(input_size=embedding_dim, hidden_size=1024,
+                            batch_first=True)
         self.__linear = nn.Linear(1024, vocab_size)
         # self.__softmax = nn.Softmax(dim=1)
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
+        # (64, 100)
         x = self.__embedding(x)
+        # (64, 100, 256)
         x, _ = self.__rnn(x)
+        # (64, 100, 1024)
         x = self.__linear(x)
+        # (64, 100, 65)
         return x
 
 
@@ -82,6 +87,7 @@ criterion = nn.CrossEntropyLoss()
 
 # %%
 def train(epoch: int):
+    model.train()
     for current_epoch in range(epoch):
         running_loss = []
         for inputs, labels in tqdm(train_dataloader):
@@ -89,11 +95,11 @@ def train(epoch: int):
             labels: torch.Tensor = labels.cuda()
             outputs: torch.Tensor = model(inputs)
 
-            optimizer.zero_grad()
             outputs = outputs.flatten(end_dim=1)
             labels = labels.flatten()
 
             loss: torch.Tensor = criterion(outputs, labels)
+            optimizer.zero_grad()
             loss.backward()
             optimizer.step()
 
