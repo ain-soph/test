@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 # %%
+import argparse
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -9,6 +10,7 @@ from torchvision.datasets.utils import download_url
 
 import numpy as np
 import os
+from tqdm import tqdm
 
 SEQLEN = 100
 BATCH_SIZE = 64
@@ -37,7 +39,8 @@ class TextDataset(Dataset):
 
     def __ids_from_chars(self, chars: str) -> torch.Tensor:
         return torch.from_numpy(np.asarray([self.__vocab.index(ch)
-                                            for ch in chars]))
+                                            for ch in chars]
+                                           )).long()
 
     def __chars_from_ids(self, ids: list[int]) -> str:
         return ''.join([self.__vocab[id] for id in ids])
@@ -55,8 +58,8 @@ class RNN(nn.Module):
         super().__init__()
 
         self.__embedding = nn.Embedding(vocab_size, embedding_dim)
-        self.__rnn = nn.LSTM(input_size=embedding_dim, hidden_size=128)
-        self.__linear = nn.Linear(128, vocab_size)
+        self.__rnn = nn.LSTM(input_size=embedding_dim, hidden_size=1024)
+        self.__linear = nn.Linear(1024, vocab_size)
         # self.__softmax = nn.Softmax(dim=1)
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
@@ -67,11 +70,13 @@ class RNN(nn.Module):
 
 
 # %%
-dataset = TextDataset()
+dataset = TextDataset(data_path)
 train_dataloader = DataLoader(dataset, batch_size=BATCH_SIZE,
-                              shuffle=True, drop_last=True)
+                              shuffle=True, drop_last=True,
+                              pin_memory=True)
 model = RNN(dataset.vocab_size(), 256)
-optimizer = optim.Adam(model.parameters(), lr=0.01)
+model.cuda()
+optimizer = optim.Adam(model.parameters())
 criterion = nn.CrossEntropyLoss()
 
 
@@ -79,16 +84,14 @@ criterion = nn.CrossEntropyLoss()
 def train(epoch: int):
     for current_epoch in range(epoch):
         running_loss = []
-        for inputs, labels in train_dataloader:
-            inputs: torch.Tensor
-            labels: torch.Tensor
+        for inputs, labels in tqdm(train_dataloader):
+            inputs: torch.Tensor = inputs.cuda(non_blocking=True)
+            labels: torch.Tensor = inputs.cuda()
             outputs: torch.Tensor = model(inputs)
-            # print(outputs.shape, labels.shape)
 
             optimizer.zero_grad()
-            outputs = outputs.view(BATCH_SIZE * SEQLEN,
-                                   dataset.vocab_size())
-            labels = labels.reshape(BATCH_SIZE * SEQLEN)
+            outputs = outputs.flatten(end_dim=1)
+            labels = labels.flatten()
 
             loss: torch.Tensor = criterion(outputs, labels)
             loss.backward()
@@ -100,6 +103,9 @@ def train(epoch: int):
 
 # %%
 def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--gpu', action='store_true')
+    args = parser.parse_args()
     train(8)
 
 
